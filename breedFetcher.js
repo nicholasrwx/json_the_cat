@@ -1,29 +1,39 @@
+//require request for http querie
+//HTTP API that provides more extensive JSON data about Cats
+
 const request = require("request");
-const whatbreed = process.argv.slice(2);
-
-request(
-  `https://api.thecatapi.com/v1/breeds/search?q=${whatbreed}`,
-  (error, response, body) => {
-    const data = JSON.parse(body); // this has to be inside because body isn't defined globally
-
-    //console.log('statusCode:', response && response.statusCode);
-    //console.log('body:', body);
-    // console.log(typeof body);
-    // console.log(data);
-    // console.log(typeof data);
-    console.log(error === undefined);
-    if (data[0]) {
-      //if breed is true
-      console.log(
-        "weight imperial: " +
-          data[0].weight.imperial +
-          "\n" +
-          "weight metric: " +
-          data[0].weight.metric
-      );
-    } else {
-      //if breed is false
-      console.log("breed not found");
+const fetchBreedDescription = (breedName, callback) => {
+  const call = `https://api.thecatapi.com/v1/breeds/search?q=${breedName}`;
+  request(call, (error, response, body) => {
+    if (error) {
+      //(error || error == undefined) returns null
+      return callback(error, null);
     }
-  }
-);
+    const data = JSON.parse(body); // this has to be inside because body isn't defined globally
+    const breed = data[0];
+    console.log(breed);
+    if (breed) {
+      return callback(null, breed.description);
+    } else {
+      return callback(`breed not found`, null);
+    }
+  });
+};
+
+//GET the breedname information
+
+module.exports = { fetchBreedDescription };
+
+//txt commands that are used
+//error
+//'statusCode:' response && response.statusCode
+//'body:'
+//data
+
+// if description = null
+// if request = null
+
+//this should be the function
+
+//call back to Index?
+//Export these modules to Index
